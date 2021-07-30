@@ -1,4 +1,8 @@
 package guru.springfamework.repositories;
 
-public interface CustomerRepository {
+import guru.springfamework.domain.Customer;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
+    Customer findCustomerByLastname(String lastname);
 }
