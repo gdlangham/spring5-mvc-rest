@@ -3,6 +3,7 @@ package guru.springfamework.controller.v1;
 import guru.springfamework.api.v1.model.CategoryDTO;
 import guru.springfamework.controller.v1.CategoryController;
 import guru.springfamework.service.CategoryService;
+import guru.springfamework.service.ResourceNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -40,7 +41,9 @@ public class CategoryControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(categoryController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(categoryController)
+                .setControllerAdvice(new RestResponseEntityExceptionHandler())
+                .build();
     }
 
     @Test
@@ -57,7 +60,7 @@ public class CategoryControllerTest {
 
         when(categoryService.getAllCategories()).thenReturn(categoryDTOList);
 
-        mockMvc.perform(get("/api/v1/categories/")
+        mockMvc.perform(get(CategoryController.BASE_URL)
             .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.categories", hasSize(2)));
@@ -71,10 +74,18 @@ public class CategoryControllerTest {
 
         when(categoryService.getCategoryByName(anyString())).thenReturn(category1);
 
-        mockMvc.perform(get("/api/v1/categories/Bertha/")
+        mockMvc.perform(get(CategoryController.BASE_URL+"/Bertha/")
             .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", equalTo(BERTHA)));
 //                .andExpect(jsonPath("$.id", equalTo(Long.toString(ID))));
+    }
+
+    @Test
+    public void testGetCategoryByNameNotFound() throws Exception {
+        when(categoryService.getCategoryByName(anyString())).thenThrow(ResourceNotFoundException.class);
+        mockMvc.perform(get(CategoryController.BASE_URL + "/Foo")
+            .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 }
