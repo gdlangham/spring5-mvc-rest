@@ -3,6 +3,7 @@ package guru.springfamework.controller.v1;
 import guru.springfamework.api.v1.model.VendorDTO;
 import guru.springfamework.domain.Vendor;
 import guru.springfamework.service.VendorService;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -95,7 +96,8 @@ public class VendorControllerTest {
         .content(AbstractRestControllerTest.asJsonString(vendorDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", equalTo(MY_VENDOR)))
-                .andExpect(jsonPath("$.vendor_url", equalTo(getVendorUrl(ID))));
+                .andExpect(jsonPath("$.vendor_url", equalTo(getVendorUrl(ID))))
+                .andExpect(jsonPath("$.id", Matchers.equalTo(3)));
     }
 
     @Test
