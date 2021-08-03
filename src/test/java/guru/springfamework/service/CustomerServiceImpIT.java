@@ -6,6 +6,7 @@ import guru.springfamework.domain.Customer;
 import guru.springfamework.init.DBLoader;
 import guru.springfamework.repositories.CategoryRepository;
 import guru.springfamework.repositories.CustomerRepository;
+import guru.springfamework.repositories.VendorRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,11 +32,14 @@ public class CustomerServiceImpIT {
     @Autowired
     CategoryRepository categoryRepository;
 
+    @Autowired
+    VendorRepository vendorRepository;
+
     CustomerService customerService;
 
     @Before
     public void setUp() throws Exception {
-        DBLoader dbLoad = new DBLoader(categoryRepository, customerRepository);
+        DBLoader dbLoad = new DBLoader(categoryRepository, customerRepository, vendorRepository);
         dbLoad.run();
         customerService = new CustomerServiceImpl(CustomerMapper.INSTANCE, customerRepository);
     }
